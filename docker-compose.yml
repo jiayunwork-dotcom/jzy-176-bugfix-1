@@ -1,0 +1,26 @@
+# 一份 compose 拉起前后端两个容器：
+#   docker compose up --build
+# 浏览器打开 http://localhost:8080 即可边写边看。
+services:
+  backend:
+    build: ./backend
+    container_name: deck-backend
+    environment:
+      DECK_DB_PATH: /data/decks.db
+    volumes:
+      - deck-data:/data
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+
+  frontend:
+    build: ./frontend
+    container_name: deck-frontend
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+
+volumes:
+  deck-data:

@@ -1,0 +1,1292 @@
+{
+  "kind": "document",
+  "pages": [
+    {
+      "blocks": [
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "季度汇报 · 项目「灯塔」"
+            }
+          ],
+          "kind": "heading",
+          "level": 1,
+          "position": {
+            "end_line": null,
+            "line": 1
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "一句话"
+            }
+          ],
+          "kind": "heading",
+          "level": 2,
+          "position": {
+            "end_line": null,
+            "line": 3
+          },
+          "recoveries": []
+        },
+        {
+          "blocks": [
+            {
+              "children": [
+                {
+                  "kind": "text",
+                  "value": "我们用一个季度，把"
+                },
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "告警响应"
+                    }
+                  ],
+                  "kind": "strong"
+                },
+                {
+                  "kind": "text",
+                  "value": "从平均 "
+                },
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "42 分钟"
+                    }
+                  ],
+                  "kind": "emphasis"
+                },
+                {
+                  "kind": "text",
+                  "value": " 压到了 "
+                },
+                {
+                  "kind": "code_span",
+                  "value": "7 分钟"
+                },
+                {
+                  "kind": "text",
+                  "value": "。"
+                }
+              ],
+              "kind": "paragraph",
+              "position": {
+                "end_line": 5,
+                "line": 5
+              },
+              "recoveries": []
+            }
+          ],
+          "kind": "quote",
+          "position": {
+            "end_line": 5,
+            "line": 5
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "本次汇报你会看到"
+            }
+          ],
+          "kind": "heading",
+          "level": 2,
+          "position": {
+            "end_line": null,
+            "line": 7
+          },
+          "recoveries": []
+        },
+        {
+          "items": [
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "背景与目标"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 9,
+                    "line": 9
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 9,
+                "line": 9
+              },
+              "recoveries": []
+            },
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "做了什么"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 10,
+                    "line": 10
+                  },
+                  "recoveries": []
+                },
+                {
+                  "items": [
+                    {
+                      "blocks": [
+                        {
+                          "children": [
+                            {
+                              "kind": "text",
+                              "value": "规则收敛"
+                            }
+                          ],
+                          "kind": "paragraph",
+                          "position": {
+                            "end_line": 11,
+                            "line": 11
+                          },
+                          "recoveries": []
+                        },
+                        {
+                          "items": [
+                            {
+                              "blocks": [
+                                {
+                                  "children": [
+                                    {
+                                      "kind": "text",
+                                      "value": "去掉重复告警"
+                                    }
+                                  ],
+                                  "kind": "paragraph",
+                                  "position": {
+                                    "end_line": 12,
+                                    "line": 12
+                                  },
+                                  "recoveries": []
+                                }
+                              ],
+                              "kind": "list_item",
+                              "level": 2,
+                              "loose": false,
+                              "marker_column": 6,
+                              "position": {
+                                "end_line": 12,
+                                "line": 12
+                              },
+                              "recoveries": []
+                            },
+                            {
+                              "blocks": [
+                                {
+                                  "children": [
+                                    {
+                                      "kind": "text",
+                                      "value": "合并同源事件"
+                                    }
+                                  ],
+                                  "kind": "paragraph",
+                                  "position": {
+                                    "end_line": 13,
+                                    "line": 13
+                                  },
+                                  "recoveries": []
+                                }
+                              ],
+                              "kind": "list_item",
+                              "level": 2,
+                              "loose": false,
+                              "marker_column": 6,
+                              "position": {
+                                "end_line": 13,
+                                "line": 13
+                              },
+                              "recoveries": []
+                            }
+                          ],
+                          "kind": "bullet_list",
+                          "position": {
+                            "end_line": 13,
+                            "line": 12
+                          },
+                          "recoveries": []
+                        }
+                      ],
+                      "kind": "list_item",
+                      "level": 1,
+                      "loose": false,
+                      "marker_column": 3,
+                      "position": {
+                        "end_line": 11,
+                        "line": 11
+                      },
+                      "recoveries": []
+                    },
+                    {
+                      "blocks": [
+                        {
+                          "children": [
+                            {
+                              "kind": "text",
+                              "value": "值班流程"
+                            }
+                          ],
+                          "kind": "paragraph",
+                          "position": {
+                            "end_line": 14,
+                            "line": 14
+                          },
+                          "recoveries": []
+                        },
+                        {
+                          "items": [
+                            {
+                              "blocks": [
+                                {
+                                  "children": [
+                                    {
+                                      "kind": "text",
+                                      "value": "一线先分诊"
+                                    }
+                                  ],
+                                  "kind": "paragraph",
+                                  "position": {
+                                    "end_line": 15,
+                                    "line": 15
+                                  },
+                                  "recoveries": []
+                                },
+                                {
+                                  "items": [
+                                    {
+                                      "blocks": [
+                                        {
+                                          "children": [
+                                            {
+                                              "kind": "text",
+                                              "value": "二线只处理升级"
+                                            }
+                                          ],
+                                          "kind": "paragraph",
+                                          "position": {
+                                            "end_line": 16,
+                                            "line": 16
+                                          },
+                                          "recoveries": []
+                                        }
+                                      ],
+                                      "kind": "list_item",
+                                      "level": 3,
+                                      "loose": false,
+                                      "marker_column": 9,
+                                      "position": {
+                                        "end_line": 16,
+                                        "line": 16
+                                      },
+                                      "recoveries": [
+                                        {
+                                          "code": "tab_indent_normalized",
+                                          "detail": {
+                                            "prefix_repr": "'\\t     '"
+                                          },
+                                          "end_line": null,
+                                          "line": 16,
+                                          "message": "第 16 行列表缩进含制表符，已按 4 列制表位折算",
+                                          "page": 0,
+                                          "severity": "info"
+                                        },
+                                        {
+                                          "code": "mixed_indentation",
+                                          "detail": {
+                                            "column": 9,
+                                            "prefix_repr": "'\\t     '"
+                                          },
+                                          "end_line": null,
+                                          "line": 16,
+                                          "message": "第 16 行列表缩进混用了制表符与空格，层级按折算后的列计算，请统一缩进写法",
+                                          "page": 0,
+                                          "severity": "warning"
+                                        }
+                                      ]
+                                    }
+                                  ],
+                                  "kind": "bullet_list",
+                                  "position": {
+                                    "end_line": 16,
+                                    "line": 16
+                                  },
+                                  "recoveries": []
+                                }
+                              ],
+                              "kind": "list_item",
+                              "level": 2,
+                              "loose": false,
+                              "marker_column": 7,
+                              "position": {
+                                "end_line": 15,
+                                "line": 15
+                              },
+                              "recoveries": []
+                            }
+                          ],
+                          "kind": "bullet_list",
+                          "position": {
+                            "end_line": 16,
+                            "line": 15
+                          },
+                          "recoveries": []
+                        }
+                      ],
+                      "kind": "list_item",
+                      "level": 1,
+                      "loose": false,
+                      "marker_column": 3,
+                      "position": {
+                        "end_line": 14,
+                        "line": 14
+                      },
+                      "recoveries": []
+                    },
+                    {
+                      "blocks": [
+                        {
+                          "children": [
+                            {
+                              "kind": "text",
+                              "value": "自动化"
+                            }
+                          ],
+                          "kind": "paragraph",
+                          "position": {
+                            "end_line": 17,
+                            "line": 17
+                          },
+                          "recoveries": []
+                        }
+                      ],
+                      "kind": "list_item",
+                      "level": 1,
+                      "loose": false,
+                      "marker_column": 3,
+                      "position": {
+                        "end_line": 17,
+                        "line": 17
+                      },
+                      "recoveries": []
+                    }
+                  ],
+                  "kind": "ordered_list",
+                  "position": {
+                    "end_line": 17,
+                    "line": 11
+                  },
+                  "recoveries": [],
+                  "start": 1
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 10,
+                "line": 10
+              },
+              "recoveries": []
+            },
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "数据与结论"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 18,
+                    "line": 18
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 18,
+                "line": 18
+              },
+              "recoveries": []
+            },
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "下季度计划"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 19,
+                    "line": 19
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": true,
+              "marker_column": 0,
+              "position": {
+                "end_line": 19,
+                "line": 19
+              },
+              "recoveries": []
+            }
+          ],
+          "kind": "ordered_list",
+          "position": {
+            "end_line": 19,
+            "line": 9
+          },
+          "recoveries": [],
+          "start": 1
+        },
+        {
+          "items": [
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "附录里有完整的指标口径"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 21,
+                    "line": 21
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 21,
+                "line": 21
+              },
+              "recoveries": []
+            },
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "所有图表都能点开看大图"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 22,
+                    "line": 22
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 22,
+                "line": 22
+              },
+              "recoveries": []
+            }
+          ],
+          "kind": "bullet_list",
+          "position": {
+            "end_line": 22,
+            "line": 21
+          },
+          "recoveries": []
+        }
+      ],
+      "page_no": 1,
+      "position": {
+        "end_line": 22,
+        "line": 1
+      },
+      "recoveries": [
+        {
+          "code": "tab_indent_normalized",
+          "detail": {
+            "prefix_repr": "'\\t     '"
+          },
+          "end_line": null,
+          "line": 16,
+          "message": "第 16 行列表缩进含制表符，已按 4 列制表位折算",
+          "page": 1,
+          "severity": "info"
+        },
+        {
+          "code": "mixed_indentation",
+          "detail": {
+            "column": 9,
+            "prefix_repr": "'\\t     '"
+          },
+          "end_line": null,
+          "line": 16,
+          "message": "第 16 行列表缩进混用了制表符与空格，层级按折算后的列计算，请统一缩进写法",
+          "page": 1,
+          "severity": "warning"
+        }
+      ]
+    },
+    {
+      "blocks": [
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "做了什么"
+            }
+          ],
+          "kind": "heading",
+          "level": 1,
+          "position": {
+            "end_line": null,
+            "line": 1
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "规则收敛"
+            }
+          ],
+          "kind": "heading",
+          "level": 2,
+          "position": {
+            "end_line": null,
+            "line": 3
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "原来的规则有三类问题："
+            }
+          ],
+          "kind": "paragraph",
+          "position": {
+            "end_line": 5,
+            "line": 5
+          },
+          "recoveries": []
+        },
+        {
+          "items": [
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "重复：同一条故障发十几次"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 7,
+                    "line": 7
+                  },
+                  "recoveries": []
+                },
+                {
+                  "items": [
+                    {
+                      "blocks": [
+                        {
+                          "children": [
+                            {
+                              "kind": "text",
+                              "value": "不同规则各发一遍"
+                            }
+                          ],
+                          "kind": "paragraph",
+                          "position": {
+                            "end_line": 8,
+                            "line": 8
+                          },
+                          "recoveries": []
+                        }
+                      ],
+                      "kind": "list_item",
+                      "level": 1,
+                      "loose": false,
+                      "marker_column": 2,
+                      "position": {
+                        "end_line": 8,
+                        "line": 8
+                      },
+                      "recoveries": []
+                    },
+                    {
+                      "blocks": [
+                        {
+                          "children": [
+                            {
+                              "kind": "text",
+                              "value": "轮询周期内重复触发"
+                            }
+                          ],
+                          "kind": "paragraph",
+                          "position": {
+                            "end_line": 9,
+                            "line": 9
+                          },
+                          "recoveries": []
+                        }
+                      ],
+                      "kind": "list_item",
+                      "level": 1,
+                      "loose": false,
+                      "marker_column": 2,
+                      "position": {
+                        "end_line": 9,
+                        "line": 9
+                      },
+                      "recoveries": []
+                    }
+                  ],
+                  "kind": "bullet_list",
+                  "position": {
+                    "end_line": 9,
+                    "line": 8
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 7,
+                "line": 7
+              },
+              "recoveries": []
+            },
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "噪声：阈值拍脑袋"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 10,
+                    "line": 10
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 10,
+                "line": 10
+              },
+              "recoveries": []
+            },
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "缺失：真正要紧的没人报"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 11,
+                    "line": 11
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 11,
+                "line": 11
+              },
+              "recoveries": []
+            }
+          ],
+          "kind": "bullet_list",
+          "position": {
+            "end_line": 11,
+            "line": 7
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "关键改动：去重流水线"
+            }
+          ],
+          "kind": "heading",
+          "level": 2,
+          "position": {
+            "end_line": null,
+            "line": 13
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "核心逻辑其实很短："
+            }
+          ],
+          "kind": "paragraph",
+          "position": {
+            "end_line": 15,
+            "line": 15
+          },
+          "recoveries": []
+        },
+        {
+          "closed": true,
+          "info": "python",
+          "kind": "code_block",
+          "language": "python",
+          "position": {
+            "end_line": 28,
+            "line": 17
+          },
+          "recoveries": [],
+          "value": "def dedupe(events, window=300):\n    seen = set()\n    for ev in events:\n        key = (ev.service, ev.fingerprint)\n        if key in seen:\n            continue\n        if ev.age_seconds() > window:\n            seen.clear()\n        seen.add(key)\n        yield ev"
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "注意代码块里的这些行都只是"
+            },
+            {
+              "children": [
+                {
+                  "kind": "text",
+                  "value": "普通文字"
+                }
+              ],
+              "kind": "strong"
+            },
+            {
+              "kind": "text",
+              "value": "："
+            }
+          ],
+          "kind": "paragraph",
+          "position": {
+            "end_line": 30,
+            "line": 30
+          },
+          "recoveries": []
+        },
+        {
+          "closed": true,
+          "info": "text",
+          "kind": "code_block",
+          "language": "text",
+          "position": {
+            "end_line": 36,
+            "line": 32
+          },
+          "recoveries": [],
+          "value": "# 这不是标题\n--- 这不是翻页符\n- 这也不是列表项"
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "自动化"
+            }
+          ],
+          "kind": "heading",
+          "level": 2,
+          "position": {
+            "end_line": null,
+            "line": 38
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "值班同学写了一个机器人，文档见 "
+            },
+            {
+              "children": [
+                {
+                  "kind": "text",
+                  "value": "值班手册"
+                }
+              ],
+              "kind": "link",
+              "title": null,
+              "url": "https://example.local/runbook"
+            },
+            {
+              "kind": "text",
+              "value": "，\n效果见下图："
+            }
+          ],
+          "kind": "paragraph",
+          "position": {
+            "end_line": 41,
+            "line": 40
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "alt": "告警量下降曲线",
+              "kind": "image",
+              "title": "告警量下降 83%",
+              "url": "/img/alert-drop.png"
+            }
+          ],
+          "kind": "paragraph",
+          "position": {
+            "end_line": 43,
+            "line": 43
+          },
+          "recoveries": []
+        }
+      ],
+      "page_no": 2,
+      "position": {
+        "end_line": 43,
+        "line": 1
+      },
+      "recoveries": []
+    },
+    {
+      "blocks": [
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "数据、结论与计划"
+            }
+          ],
+          "kind": "heading",
+          "level": 1,
+          "position": {
+            "end_line": null,
+            "line": 1
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "数据"
+            }
+          ],
+          "kind": "heading",
+          "level": 2,
+          "position": {
+            "end_line": null,
+            "line": 3
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "| 这里不解析表格 | 表格按普通段落展示，保持简单 |"
+            }
+          ],
+          "kind": "paragraph",
+          "position": {
+            "end_line": 5,
+            "line": 5
+          },
+          "recoveries": []
+        },
+        {
+          "blocks": [
+            {
+              "children": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "结论"
+                    }
+                  ],
+                  "kind": "strong"
+                },
+                {
+                  "kind": "text",
+                  "value": "：响应时间下降主要来自“分诊前置”，而不是单纯加人。"
+                }
+              ],
+              "kind": "paragraph",
+              "position": {
+                "end_line": 7,
+                "line": 7
+              },
+              "recoveries": []
+            }
+          ],
+          "kind": "quote",
+          "position": {
+            "end_line": 7,
+            "line": 7
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "下季度计划"
+            }
+          ],
+          "kind": "heading",
+          "level": 2,
+          "position": {
+            "end_line": null,
+            "line": 9
+          },
+          "recoveries": []
+        },
+        {
+          "items": [
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "把分诊机器人接入"
+                    },
+                    {
+                      "children": [
+                        {
+                          "kind": "text",
+                          "value": "工单系统"
+                        }
+                      ],
+                      "kind": "link",
+                      "title": "工单",
+                      "url": "https://example.local/tickets"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 11,
+                    "line": 11
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 11,
+                "line": 11
+              },
+              "recoveries": []
+            },
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "补齐两个缺失场景"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 12,
+                    "line": 12
+                  },
+                  "recoveries": []
+                },
+                {
+                  "items": [
+                    {
+                      "blocks": [
+                        {
+                          "children": [
+                            {
+                              "kind": "text",
+                              "value": "数据库主从延迟"
+                            }
+                          ],
+                          "kind": "paragraph",
+                          "position": {
+                            "end_line": 13,
+                            "line": 13
+                          },
+                          "recoveries": []
+                        }
+                      ],
+                      "kind": "list_item",
+                      "level": 1,
+                      "loose": false,
+                      "marker_column": 3,
+                      "position": {
+                        "end_line": 13,
+                        "line": 13
+                      },
+                      "recoveries": []
+                    },
+                    {
+                      "blocks": [
+                        {
+                          "children": [
+                            {
+                              "kind": "text",
+                              "value": "消息队列积压"
+                            }
+                          ],
+                          "kind": "paragraph",
+                          "position": {
+                            "end_line": 14,
+                            "line": 14
+                          },
+                          "recoveries": []
+                        }
+                      ],
+                      "kind": "list_item",
+                      "level": 1,
+                      "loose": false,
+                      "marker_column": 3,
+                      "position": {
+                        "end_line": 14,
+                        "line": 14
+                      },
+                      "recoveries": []
+                    }
+                  ],
+                  "kind": "ordered_list",
+                  "position": {
+                    "end_line": 14,
+                    "line": 13
+                  },
+                  "recoveries": [],
+                  "start": 1
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 12,
+                "line": 12
+              },
+              "recoveries": []
+            },
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "复盘机制固定下来"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 15,
+                    "line": 15
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": true,
+              "marker_column": 0,
+              "position": {
+                "end_line": 15,
+                "line": 15
+              },
+              "recoveries": []
+            }
+          ],
+          "kind": "ordered_list",
+          "position": {
+            "end_line": 15,
+            "line": 11
+          },
+          "recoveries": [],
+          "start": 1
+        },
+        {
+          "items": [
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "时间线：第 2 周联调，第 6 周全量"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 17,
+                    "line": 17
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 17,
+                "line": 17
+              },
+              "recoveries": []
+            },
+            {
+              "blocks": [
+                {
+                  "children": [
+                    {
+                      "kind": "text",
+                      "value": "风险点：工单系统的接口限流"
+                    }
+                  ],
+                  "kind": "paragraph",
+                  "position": {
+                    "end_line": 18,
+                    "line": 18
+                  },
+                  "recoveries": []
+                }
+              ],
+              "kind": "list_item",
+              "level": 0,
+              "loose": false,
+              "marker_column": 0,
+              "position": {
+                "end_line": 18,
+                "line": 18
+              },
+              "recoveries": []
+            }
+          ],
+          "kind": "bullet_list",
+          "position": {
+            "end_line": 18,
+            "line": 17
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "最后"
+            }
+          ],
+          "kind": "heading",
+          "level": 2,
+          "position": {
+            "end_line": null,
+            "line": 20
+          },
+          "recoveries": []
+        },
+        {
+          "children": [
+            {
+              "kind": "text",
+              "value": "谢谢大家，问题环节见。"
+            }
+          ],
+          "kind": "paragraph",
+          "position": {
+            "end_line": 22,
+            "line": 22
+          },
+          "recoveries": []
+        }
+      ],
+      "page_no": 3,
+      "position": {
+        "end_line": 22,
+        "line": 1
+      },
+      "recoveries": []
+    }
+  ],
+  "recoveries": []
+}
