@@ -50,6 +50,8 @@ npm run dev          # 默认把 /api 代理到 http://localhost:8000
   不崩不吞后文，每处补救都显示在右侧“� 容错标注”里。
 
 容错与增量一致性的完整设计见 [`docs/error-recovery.md`](docs/error-recovery.md)。
+并发保存与前端自动保存（乐观锁事务、单飞、冲突处置）的设计与代价见
+[`docs/concurrency.md`](docs/concurrency.md)。
 
 ## HTTP 接口
 
@@ -125,5 +127,15 @@ docs/error-recovery.md
 - 残缺输入不崩且容错点有标注：`test_recovery.py`
 - 增量与全量逐字段一致：`test_incremental.py`（随机编辑序列对拍）
 - 过期修订号保存被拒：`test_storage.py` / `test_api.py`
+- 同基准并发保存恰好一成余 409（线程/HTTP/多进程）：`test_concurrency.py`
 - 示例讲稿固定回归：`test_sample_fixture.py` +
   `tests/fixtures/sample_deck.expected.json`（≥3 页、多层列表、代码块）
+
+前端行为测试（自动保存状态机、冲突三路径）：
+
+```bash
+cd frontend
+npm install
+npm test          # vitest，7 个用例
+npm run typecheck
+```

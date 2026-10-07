@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import type { ConflictResponse } from "../types";
 
 /**
- * 保存冲突对话框：明确告知当前修订号，让写作者选择
- *  - 保留服务器版本（放弃本地改动）
- *  - 保留我的版本（以最新修订号为依据重新保存）
- *  - 手动合并（左右对照，自己改完再存）
+ * 保存冲突对话框：明确告知“我基于第几修订、服务器到第几修订”，让写作者选择
+ *  - 采用服务器版本（放弃本地改动，本地基线推进到服务器修订）
+ *  - 保留我的版本（以服务器当前修订为新基准，把我的内容另存为最新修订）
+ *  - 手动合并（左右对照，自己改完以服务器当前修订为基准再存）
  * 绝不会悄悄覆盖任何一方。
  */
 export function ConflictDialog({
@@ -13,24 +13,26 @@ export function ConflictDialog({
   localContent,
   onChooseServer,
   onForceMine,
-  onMerge,
 }: {
   conflict: ConflictResponse;
   localContent: string;
   onChooseServer: () => void;
   onForceMine: (merged: string) => void;
-  onMerge: () => void;
 }) {
   const [mode, setMode] = useState<"choose" | "merge">("choose");
   const [merged, setMerged] = useState(localContent);
+  const base = conflict.base_revision;
 
   return (
     <div className="modal-backdrop">
       <div className="modal" role="dialog" aria-modal="true">
         <h2>保存冲突：这份讲稿已被别处修改</h2>
         <p className="modal-desc">
-          你基于第 <b>？</b> 修订在编辑，而服务器当前已是第{" "}
-          <b>{conflict.current_revision}</b> 修订。为避免覆盖别人的改动，本次保存已被拒绝。
+          你基于第 <b data-testid="conflict-base-rev">{base ?? "?"}</b> 修订在编辑，
+          而服务器当前已是第{" "}
+          <b data-testid="conflict-current-rev">{conflict.current_revision}</b> 修订。
+          为避免覆盖别人的改动，本次保存已被拒绝；你刚敲的内容仍保留在左侧编辑框，
+          没有丢失。
         </p>
 
         {mode === "choose" ? (
@@ -56,7 +58,7 @@ export function ConflictDialog({
           <div className="merge-view">
             <div className="merge-cols">
               <div>
-                <h3>我的版本</h3>
+                <h3>我的版本（基于第 {base ?? "?"} 修订）</h3>
                 <pre>{localContent}</pre>
               </div>
               <div>

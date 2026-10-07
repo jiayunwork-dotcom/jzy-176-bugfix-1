@@ -36,8 +36,11 @@ def hello():
 右边会标出每一处“猜”出来的地方。
 `;
 
+const SAVE_DEBOUNCE_MS = 800;
+const SAVE_RETRY_MS = 1500;
+
 type SaveState =
-  | { kind: "idle" }
+  | { kind: "idle" } // 还没有在飞保存；是否有改动看 dirty
   | { kind: "saving" }
   | { kind: "saved"; revision: number; at: number }
   | { kind: "error"; message: string };
@@ -51,16 +54,121 @@ export default function App() {
   const [reused, setReused] = useState<number[]>([]);
 
   const [docId, setDocId] = useState<number | null>(null);
+  // 本地基线：上一次与服务器达成一致（保存成功 / 采用服务器版）的修订号。
   const [baseRevision, setBaseRevision] = useState(0);
-  const [serverRevision, setServerRevision] = useState(0);
   const [saveState, setSaveState] = useState<SaveState>({ kind: "idle" });
   const [conflict, setConflict] = useState<ConflictResponse | null>(null);
 
   // 增量解析：以 ref 记录上次已解析文本，敲字时只发一批偏移量编辑。
   const lastParsed = useRef<string>("");
   const parseTimer = useRef<number | null>(null);
-  const saveTimer = useRef<number | null>(null);
 
+  // ---------------- 自动保存：单飞（同一时刻至多一个在飞保存） ----------------
+  // 所有异步回调只读这些 ref，避免闭包拿到过期的 state。
+  const contentRef = useRef(SAMPLE); // 编辑器此刻的全文
+  const docIdRef = useRef<number | null>(null);
+  const baseRevRef = useRef(0); // 本地基线修订号
+  const conflictRef = useRef<ConflictResponse | null>(null);
+  // savedText：最后一次与服务端一致的全文。只在“保存成功 / 新建 / 采用
+  // 服务器版”时显式更新；绝不在敲字时顺手更新——旧版正是因为每次敲字都
+  // 把它改成当前内容，导致自动保存守卫恒为假、请求永远发不出去。
+  const savedTextRef = useRef<string>("");
+  // 在飞请求所提交的全文与基线；null 表示没有在飞保存。
+  const inFlightRef = useRef<{ text: string; base: number } | null>(null);
+  const saveTimerRef = useRef<number | null>(null);
+
+  useEffect(() => { contentRef.current = content; }, [content]);
+  useEffect(() => { docIdRef.current = docId; }, [docId]);
+  useEffect(() => { baseRevRef.current = baseRevision; }, [baseRevision]);
+  useEffect(() => { conflictRef.current = conflict; }, [conflict]);
+
+  const clearSaveTimer = useCallback(() => {
+    if (saveTimerRef.current !== null) {
+      window.clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = null;
+    }
+  }, []);
+
+  /**
+   * 立即发一次保存（单飞）。被跳过返回 false：
+   * 没有文档 / 冲突挂起等人裁决 / 已有在飞保存 / 全文与已保存一致。
+   */
+  const flush = useCallback((): boolean => {
+    const id = docIdRef.current;
+    if (id == null) return false;
+    if (conflictRef.current !== null) return false;
+    if (inFlightRef.current !== null) return false;
+    const text = contentRef.current;
+    if (text === savedTextRef.current) return false; // 无改动：不制造空修订
+
+    const base = baseRevRef.current;
+    inFlightRef.current = { text, base };
+    setSaveState({ kind: "saving" });
+
+    api
+      .saveDocument(id, text, base)
+      .then((resp) => {
+        inFlightRef.current = null;
+        // 这份 text 已作为 resp.revision 落盘；更新已存基线
+        savedTextRef.current = text;
+        setBaseRevision(resp.revision);
+        baseRevRef.current = resp.revision;
+        // “在飞期间有没有继续敲字”只看此刻编辑器全文是否还等于刚存好的
+        // 那份 text——不能用“与旧 savedText 不同”判断，因为冲突后另存的
+        // 内容本来就与旧 savedText 不同，但用户并没有再敲字。
+        if (contentRef.current !== text) {
+          // 后来敲的内容尚未落盘：已存好的这份绝不重复提交，只把“后来
+          // 敲的”当新改动、以刚返回的新修订号为基线再存一次。
+          setSaveState({ kind: "idle" });
+          saveTimerRef.current = window.setTimeout(() => flushRef.current(), 0);
+        } else {
+          setSaveState({
+            kind: "saved",
+            revision: resp.revision,
+            at: Date.now(),
+          });
+        }
+      })
+      .catch((e: unknown) => {
+        inFlightRef.current = null;
+        if (e instanceof RevisionConflict) {
+          // “你基于第几修订在编辑”是纯本地事实：服务端只知道当前修订，
+          // 被拒保存的基线号必须在本地补进 409 响应再交给弹窗。
+          setConflict({ ...e.body, base_revision: base });
+          setSaveState({ kind: "idle" });
+          return;
+        }
+        // 网络/5xx：不假装已保存，保留未保存状态并稍后自动重试
+        setSaveState({
+          kind: "error",
+          message: e instanceof Error ? e.message : String(e),
+        });
+        saveTimerRef.current = window.setTimeout(
+          () => flushRef.current(), SAVE_RETRY_MS,
+        );
+      });
+    return true;
+  }, []);
+
+  // flush 在自身的 Promise 回调里递归调用，用 ref 打破引用环
+  const flushRef = useRef(flush);
+  useEffect(() => { flushRef.current = flush; }, [flush]);
+
+  // 停止输入一小会儿后自动保存；保存进行中又敲字则等响应回来后补存
+  //（flush 的响应处理会比较编辑器全文与在飞文本，自行决定是否补存）
+  useEffect(() => {
+    if (docId == null) return;
+    clearSaveTimer();
+    if (conflict != null) return;
+    if (inFlightRef.current !== null) return;
+    if (content === savedTextRef.current) return; // 无改动，不发请求
+    saveTimerRef.current = window.setTimeout(() => {
+      flush();
+    }, SAVE_DEBOUNCE_MS);
+    return clearSaveTimer;
+  }, [content, docId, conflict, flush, clearSaveTimer]);
+
+  // ---------------- 解析（既有行为，保持不变） ----------------
   const scheduleParse = useCallback((next: string) => {
     if (parseTimer.current) window.clearTimeout(parseTimer.current);
     parseTimer.current = window.setTimeout(async () => {
@@ -102,82 +210,76 @@ export default function App() {
 
   const onEdit = (next: string) => {
     setContent(next);
+    contentRef.current = next; // 立即反映，保证在飞回调能读到最新文本
     scheduleParse(next);
   };
 
-  // ---------------- 自动保存 ----------------
-  const save = useCallback(
-    async (text: string, rev: number) => {
-      if (docId == null) return;
-      setSaveState({ kind: "saving" });
-      try {
-        const resp = await api.saveDocument(docId, text, rev);
-        setBaseRevision(resp.revision);
-        setServerRevision(resp.revision);
-        setSaveState({ kind: "saved", revision: resp.revision, at: Date.now() });
-      } catch (e) {
-        if (e instanceof RevisionConflict) {
-          setConflict(e.body);
-          setSaveState({ kind: "idle" });
-        } else {
-          setSaveState({ kind: "error", message: (e as Error).message });
-        }
-      }
-    },
-    [docId],
-  );
+  // 卸载时清掉定时器
+  useEffect(() => () => clearSaveTimer(), [clearSaveTimer]);
 
-  // 停止输入 800ms 后自动保存
-  useEffect(() => {
-    if (docId == null) return;
-    if (saveTimer.current) window.clearTimeout(saveTimer.current);
-    saveTimer.current = window.setTimeout(() => {
-      if (content !== lastSavedRef.current) save(content, baseRevision);
-    }, 800);
-    return () => {
-      if (saveTimer.current) window.clearTimeout(saveTimer.current);
-    };
-  }, [content, docId, baseRevision, save]);
-
-  const lastSavedRef = useRef<string>("");
-  useEffect(() => {
-    if (saveState.kind === "saved") lastSavedRef.current = content;
-  }, [saveState, content]);
-
+  // ---------------- 新建 ----------------
   const createNew = async () => {
     const meta = await api.createDocument("无标题讲稿", content);
     setDocId(meta.id);
+    docIdRef.current = meta.id;
     setBaseRevision(meta.current_revision);
-    setServerRevision(meta.current_revision);
-    lastSavedRef.current = content;
-    setSaveState({ kind: "saved", revision: meta.current_revision, at: Date.now() });
+    baseRevRef.current = meta.current_revision;
+    savedTextRef.current = content; // 当前全文即首版修订，已落盘
+    inFlightRef.current = null;
+    setSaveState({
+      kind: "saved",
+      revision: meta.current_revision,
+      at: Date.now(),
+    });
   };
 
-  // ---------------- 冲突处理 ----------------
+  // ---------------- 冲突裁决 ----------------
   const chooseServer = () => {
     if (!conflict) return;
-    setContent(conflict.current_content);
+    const server = conflict.current_content;
+    setContent(server);
+    contentRef.current = server;
     setBaseRevision(conflict.current_revision);
-    setServerRevision(conflict.current_revision);
-    lastSavedRef.current = conflict.current_content;
+    baseRevRef.current = conflict.current_revision;
+    savedTextRef.current = server; // 采用服务器版 = 本地与服务端重新一致
+    inFlightRef.current = null;
     setConflict(null);
-    scheduleParse(conflict.current_content);
+    setSaveState({
+      kind: "saved",
+      revision: conflict.current_revision,
+      at: Date.now(),
+    });
+    scheduleParse(server);
   };
 
-  const forceMine = async (merged: string) => {
+  /**
+   * “保留我的 / 合并后保存”：以服务器当前修订为新基线把本地文本另存。
+   * 若保存期间服务器又被推进（多方同时改），会再次得到 409，弹窗带着新的
+   * 修订号回来；对方版本留在历史链里，绝不会被本次保存覆盖。
+   */
+  const forceMine = (merged: string) => {
     if (!conflict) return;
+    const base = conflict.current_revision;
     setConflict(null);
-    await save(merged, conflict.current_revision);
-    if (merged !== content) {
+    conflictRef.current = null;
+    setBaseRevision(base);
+    baseRevRef.current = base;
+    if (merged !== contentRef.current) {
       setContent(merged);
+      contentRef.current = merged;
       scheduleParse(merged);
     }
+    // merged 相对服务器版必有差异才走到这里；savedText 仍是服务器旧文，
+    // flush 会以新基线 base 立即保存 merged。
+    flush();
   };
 
   const currentPage = useMemo(
     () => tree?.pages.find((p) => p.page_no === pageNo) ?? tree?.pages[0] ?? null,
     [tree, pageNo],
   );
+
+  const dirty = content !== savedTextRef.current;
 
   return (
     <div className="app">
@@ -190,11 +292,10 @@ export default function App() {
             </button>
           ) : (
             <>
-              <span className="rev">
+              <span className="rev" data-testid="rev-label">
                 修订 #{baseRevision}
-                {serverRevision !== baseRevision && ` (服务器 #${serverRevision})`}
               </span>
-              <SaveBadge state={saveState} />
+              <SaveBadge state={saveState} dirty={dirty} />
             </>
           )}
         </div>
@@ -251,20 +352,34 @@ export default function App() {
           localContent={content}
           onChooseServer={chooseServer}
           onForceMine={forceMine}
-          onMerge={() => undefined}
         />
       )}
     </div>
   );
 }
 
-function SaveBadge({ state }: { state: SaveState }) {
-  if (state.kind === "saving") return <span className="save saving">保存中…</span>;
+function SaveBadge({ state, dirty }: { state: SaveState; dirty: boolean }) {
+  if (state.kind === "saving")
+    return <span className="save saving" data-testid="save-badge">保存中…</span>;
   if (state.kind === "saved")
-    return <span className="save saved">已保存（修订 #{state.revision}）</span>;
+    return dirty ? (
+      <span className="save" data-testid="save-badge">有未保存的改动</span>
+    ) : (
+      <span className="save saved" data-testid="save-badge">
+        已保存（修订 #{state.revision}）
+      </span>
+    );
   if (state.kind === "error")
-    return <span className="save error">保存失败：{state.message}</span>;
-  return <span className="save">未保存</span>;
+    return (
+      <span className="save error" data-testid="save-badge">
+        保存失败，稍后重试：{state.message}
+      </span>
+    );
+  return (
+    <span className="save" data-testid="save-badge">
+      {dirty ? "有未保存的改动" : "未保存"}
+    </span>
+  );
 }
 
 /**

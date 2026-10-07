@@ -125,4 +125,9 @@ export interface ConflictResponse {
   current_revision: number;
   current_content: string;
   document_id: number;
+  /**
+   * 被拒保存所依据的修订号——这是纯客户端状态（服务端无从知道），
+   * 在收到 409 时由本地填入，冲突框据此显示“你基于第几修订在编辑”。
+   */
+  base_revision?: number;
 }
