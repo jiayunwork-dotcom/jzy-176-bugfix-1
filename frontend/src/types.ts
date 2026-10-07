@@ -122,6 +122,8 @@ export interface DocResponse extends DocMeta {
 export interface ConflictResponse {
   error: "revision_conflict";
   message: string;
+  /** 本次被拒保存所依据（“我正在基于第几修订编辑”）的修订号。 */
+  base_revision: number;
   current_revision: number;
   current_content: string;
   document_id: number;

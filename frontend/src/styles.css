@@ -45,6 +45,7 @@ body {
 .save { font-size: 13px; color: var(--muted); }
 .save.saved { color: #2e9e5b; }
 .save.saving { color: var(--accent); }
+.save.dirty { color: #c47f17; }
 .save.error { color: #d14343; }
 
 .panes { flex: 1; display: flex; min-height: 0; }

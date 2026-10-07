@@ -195,6 +195,7 @@ def save_document(doc_id: int, req: SaveDocumentRequest):
             content={
                 "error": "revision_conflict",
                 "message": str(exc),
+                "base_revision": exc.base_revision,
                 "current_revision": exc.current_revision,
                 "current_content": exc.current_content,
                 "document_id": exc.document_id,

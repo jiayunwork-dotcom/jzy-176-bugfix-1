@@ -8,6 +8,13 @@
 服务端当前修订已更新则拒绝（ConflictError），返回当前修订与文本，
 绝不悄悄覆盖。
 
+“核对基准修订”与“写入新修订”在**同一个数据库写事务**内完成
+（BEGIN IMMEDIATE 先拿写锁，再重读 current_revision 并决定写不写），
+因此两步不可分割：同基准的并发保存恰好一个成功，其余一律 409，
+不会出现半截写入或重复修订号。正确性由 SQLite 的锁裁决，而不是
+只靠进程内的一把锁——多个服务进程共用同一个库文件时同样成立
+（详见 docs/concurrency.md）。
+
 存储与解析的咬合：每个 revision 行存原始文本；结构树不入库，按需由
 ParseEngine 解析。每个修订有自己独立的引擎/缓存（_ParseStore 以
 (document_id, revision) 为键），增量缓存绝不跨修订串用。
@@ -26,11 +33,13 @@ from .parser.engine import Edit
 
 
 class ConflictError(Exception):
-    """base_revision 已过期：保存被拒。携带服务端当前修订与文本。"""
+    """base_revision 已过期：保存被拒。携带保存者所依据的基准修订、
+    服务端当前修订与文本。"""
 
     def __init__(self, current_revision: int, current_content: str,
-                 document_id: int):
+                 document_id: int, base_revision: int = 0):
         super().__init__(f"修订 {current_revision} 已更新，你的保存基于过期版本")
+        self.base_revision = base_revision
         self.current_revision = current_revision
         self.current_content = current_content
         self.document_id = document_id
@@ -90,18 +99,48 @@ class _CachedParse:
 
 class Storage:
     def __init__(self, path: str = ":memory:"):
+        # RLock 只负责“本进程内共享单连接”的线程安全与解析缓存串行化，
+        # 不承担跨进程的并发裁决——那是 SQLite 写事务的职责。
         self._lock = threading.RLock()
-        self._conn = sqlite3.connect(path, check_same_thread=False)
+        # isolation_level=None：由我们自己显式控制事务（BEGIN IMMEDIATE），
+        # 避免 Python sqlite3 在第一条 DML 时隐式开 DEFERRED 事务，
+        # 那种事务到写的一刻才升级锁，无法在事务开头就定裁决顺序。
+        self._conn = sqlite3.connect(
+            path, check_same_thread=False, isolation_level=None,
+        )
         self._conn.row_factory = sqlite3.Row
         self._conn.execute("PRAGMA journal_mode=WAL")
+        # 多进程共用库文件时，BEGIN IMMEDIATE 抢写锁若正被占用，
+        # 在这里等而不是立刻抛 SQLITE_BUSY（5s 对本应用足够）。
+        self._conn.execute("PRAGMA busy_timeout=5000")
         self._init_schema()
         # 解析缓存：(doc_id, revision) -> _CachedParse，绝不跨修订共用
         self._parse_cache: dict[tuple[int, int], _CachedParse] = {}
 
     @contextmanager
     def _tx(self):
+        """读/写事务（不加写锁）。保留给只读路径与新建文档使用。"""
         with self._lock:
             try:
+                self._conn.execute("BEGIN")
+                yield self._conn
+                self._conn.commit()
+            except Exception:
+                self._conn.rollback()
+                raise
+
+    @contextmanager
+    def _write_tx(self):
+        """立即取得写锁的事务：核对与写入必须在同一事务内的路径用它。
+
+        BEGIN IMMEDIATE 在事务开始就获取 RESERVED 锁：拿到锁之前
+        一切都还没读进“决策”，拿到之后到提交之间没有别的写者能插入，
+        所以“重读 current → 条件插入 → 更新 current”在单机文件上
+        对所有进程原子可见。
+        """
+        with self._lock:
+            try:
+                self._conn.execute("BEGIN IMMEDIATE")
                 yield self._conn
                 self._conn.commit()
             except Exception:
@@ -137,7 +176,7 @@ class Storage:
     def create_document(self, content: str = "", title: str = "无标题讲稿") -> DocumentMeta:
         validate_content(content)
         now = time.time()
-        with self._tx() as conn:
+        with self._write_tx() as conn:
             cur = conn.execute(
                 "INSERT INTO documents(title, current_revision, created_at, updated_at)"
                 " VALUES (?, 1, ?, ?)",
@@ -211,19 +250,39 @@ class Storage:
         base_revision: int,
         title: Optional[str] = None,
     ) -> Revision:
-        """以 base_revision 为依据保存新修订；过期则抛 ConflictError。"""
+        """以 base_revision 为依据保存新修订；过期则抛 ConflictError。
+
+        核对（读 current_revision）与写入（插 revision + 更新 document）
+        在同一个 BEGIN IMMEDIATE 事务里：拿到写锁后别的写者无法插入，
+        因此同基准并发保存恰好一个成功，其余在事务内重读时发现
+        current 已前进而得到 409，绝不会写出重复/半截修订。
+        """
         validate_content(content)
-        meta = self.get_meta(doc_id)
-        if base_revision != meta.current_revision:
-            current = self.get_revision(doc_id, meta.current_revision)
-            raise ConflictError(
-                current_revision=meta.current_revision,
-                current_content=current.content,
-                document_id=doc_id,
-            )
-        new_rev = meta.current_revision + 1
         now = time.time()
-        with self._tx() as conn:
+        with self._write_tx() as conn:
+            row = conn.execute(
+                "SELECT current_revision FROM documents WHERE id=?", (doc_id,)
+            ).fetchone()
+            if row is None:
+                # 让 NotFound 走与其它读取路径一致的异常（事务随回滚结束）
+                raise NotFoundError(f"讲稿 {doc_id} 不存在")
+            current_revision = row["current_revision"]
+            if base_revision != current_revision:
+                current_row = conn.execute(
+                    "SELECT content FROM revisions"
+                    " WHERE document_id=? AND revision=?",
+                    (doc_id, current_revision),
+                ).fetchone()
+                current_content = (
+                    current_row["content"] if current_row is not None else ""
+                )
+                raise ConflictError(
+                    current_revision=current_revision,
+                    current_content=current_content,
+                    document_id=doc_id,
+                    base_revision=base_revision,
+                )
+            new_rev = current_revision + 1
             conn.execute(
                 "INSERT INTO revisions(document_id, revision, content, created_at)"
                 " VALUES (?, ?, ?, ?)",

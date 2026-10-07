@@ -50,6 +50,8 @@ npm run dev          # 默认把 /api 代理到 http://localhost:8000
   不崩不吞后文，每处补救都显示在右侧“� 容错标注”里。
 
 容错与增量一致性的完整设计见 [`docs/error-recovery.md`](docs/error-recovery.md)。
+并发保存（原子乐观锁、多进程共用库、前端在途编辑与冲突处理）见
+[`docs/concurrency.md`](docs/concurrency.md)。
 
 ## HTTP 接口
 
@@ -84,11 +86,14 @@ npm run dev          # 默认把 /api 代理到 http://localhost:8000
 `PUT` 携带 `base_revision`；服务器已更新时返回：
 
 ```json
-{ "error": "revision_conflict", "current_revision": 3,
-  "current_content": "……", "document_id": 1 }
+{ "error": "revision_conflict", "base_revision": 2,
+  "current_revision": 3, "current_content": "……", "document_id": 1 }
 ```
 
-前端弹出冲突框：采用服务器版本 / 保留我的版本另存 / 手动合并。
+`base_revision` 是本次被拒保存所依据的修订号（“你基于第几修订在
+编辑”）。前端弹出冲突框：采用服务器版本 / 保留我的版本另存 /
+手动合并。同基准并发 PUT 恰一个成功，其余 409，绝无 500、无半截
+修订；详见 [`docs/concurrency.md`](docs/concurrency.md)。
 
 ## 代码结构
 
@@ -103,7 +108,7 @@ backend/
       assembler.py   页组装、容错文案定案
       engine.py      全量解析、编辑应用、增量重算（最长公共前后缀）
       model.py       结构树 dataclass
-    storage.py       SQLite：文档/修订、乐观锁、按修订隔离的解析缓存
+    storage.py       SQLite：文档/修订、事务内原子乐观锁（BEGIN IMMEDIATE）、按修订隔离的解析缓存
     api.py           FastAPI 路由
   tests/             解析/容错/增量对拍/存储/HTTP/示例基准
   tests/fixtures/sample_deck.md(.expected.json)   回归基准
@@ -125,5 +130,9 @@ docs/error-recovery.md
 - 残缺输入不崩且容错点有标注：`test_recovery.py`
 - 增量与全量逐字段一致：`test_incremental.py`（随机编辑序列对拍）
 - 过期修订号保存被拒：`test_storage.py` / `test_api.py`
+- 同基准并发保存恰一个成功、其余 409、修订连续（含跨连接/跨进程）：
+  `test_concurrency.py` / `test_api.py` / `test_concurrency_multiproc.py`
+- 前端自动保存、单飞合并、冲突三选项：`frontend/src/autosave.test.tsx`
+  （`cd frontend && npm test`）
 - 示例讲稿固定回归：`test_sample_fixture.py` +
   `tests/fixtures/sample_deck.expected.json`（≥3 页、多层列表、代码块）
